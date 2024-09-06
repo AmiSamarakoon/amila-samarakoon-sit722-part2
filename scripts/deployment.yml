@@ -1,1 +1,40 @@
 # Write Kubernetes Deployment Script
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: book-catalog-deployment
+  labels:
+    app: book-catalog
+spec:
+  replicas: 1  
+  selector:
+    matchLabels:
+      app: book-catalog
+  template:
+    metadata:
+      labels:
+        app: book-catalog
+    spec:
+      containers:
+      - name: bookapp
+        image: bookapp 
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://sit722_task2_er1b_user:8fgFJ23wnygfqou7h6AGovkrqkxpwwZ5@dpg-crdh1al6l47c73aum270-a.oregon-postgres.render.com/sit722_task2_er1b"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: book-catalog-service
+spec:
+  type: NodePort
+  selector:
+    app: book-catalog
+  ports:
+    - port: 80
+      targetPort: 8000
+      nodePort: 30000
